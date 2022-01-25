@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 
 class ActorCritic(nn.Module):
-    def __init__(self, input_dims, gamma=0.99, beta=0.01, hidden_units=256):
+    def __init__(self, n_actions, input_dims, gamma=0.99, beta=0.01, hidden_units=256):
         
         super(ActorCritic, self).__init__()
 
@@ -20,4 +20,10 @@ class ActorCritic(nn.Module):
         self.conv_shape = self.calc_output_shape()
 
         self.gru = nn.GRUCell(self.conv_shape, 256)
+        
+        # pi is our policy layer, as opposed to v, our value network
+        self.pi = nn.Linear(256, n_actions)
+        self.v = nn.Linear(256, 1)
+
+
 
