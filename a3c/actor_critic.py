@@ -26,4 +26,26 @@ class ActorCritic(nn.Module):
         self.v = nn.Linear(256, 1)
 
 
+def calculate_conv_output(self, input_dims):
+    state = T.zeros(1, *input_dims)
+    dimensions = self.conv1(state)
+    dimensions = self.conv2(dimensions)
+    dimensions = self.conv3(dimensions)
+    dimensions = self.conv4(dimensions)
+    return int(np.product(dimensions.size()))
+
+def forward(self, state, hidden_state):
+    conv = F.elu(self.conv1(state))
+    conv = F.elu(self.conv2(conv))
+    conv = F.elu(self.conv3(conv))
+    conv = F.elu(self.conv4(conv))
+
+    conv_state = conv.view((conv.size()[0], -1))
+
+    # handle our gated recurrent network
+    hidden = self.gru(conv_state, (hidden_state))
+
+    # send the output to our policy and value networks
+    pi = self.pi(hidden)
+    v = self.v(hidden)
 
