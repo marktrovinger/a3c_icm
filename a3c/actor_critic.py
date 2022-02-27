@@ -10,6 +10,7 @@ class ActorCritic(nn.Module):
         
         super(ActorCritic, self).__init__()
         self.gamma = gamma
+        self.tau = beta
         self.conv1 = nn.Conv2d(input_dims[0], 32, kernel_size=(3,3), stride=2,
                 padding=1)
         self.conv2 = nn.Conv2d(32, 32, kernel_size=(3,3), stride=2, padding=1)
@@ -85,4 +86,23 @@ class ActorCritic(nn.Module):
                                                         dtype=T.float), hx)[1]
         values.append(next_v.detach())
         values = T.cat(values).squeeze()
+        log_probs = T.cat(log_probs)
+        returns = T.cat(rewards)
+
+        delta_t = rewards + self.gamma * values[1:] - values[:-1]
+        n_steps = len(delta_t)
+        gae = np.zeros(n_steps)
+        for t in range(n_steps):
+            for k in range(n_steps-t):
+                temp = (self.gamma*self.tau)**k * delta_t[t+k]
+                gae[t] += temp
+        gae = T.tensor(gae, dtype=T.float)
+
+        actor_loss = -(log_probs * gae).sum()
+        critic_loss = F.mse_loss(values[1:].squeeze(), returns)
+        
+        entropy_loss = (-log_probs * T.exp(log_probs)).sum()
+        total_loss = (actor_loss + critic_loss) - 0.01*entropy_loss
+        return total_loss 
+
 
