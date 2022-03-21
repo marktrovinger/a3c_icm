@@ -35,3 +35,23 @@ class PreprocessFrame(gym.ObservationWrapper):
         super(PreprocessFrame, self).__init__(env)
         self.env = env
         self.shape = new_shape
+        # swap channel axis in new shape
+        # set observation space to new shape
+
+        def observation(self, observation):
+            # convert to grey-scale
+
+            # resize observation to new shape
+
+            # convert to numpy array
+
+            # move channel axis from 2 to 0
+
+            # observation /= 255
+
+            # return observation
+            pass
+
+class StackFrames(gym.ObservationWrapper):
+    def __init__(self, env, stack_size):
+        super(StackFrames, self).__init__(env)
