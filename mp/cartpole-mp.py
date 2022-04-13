@@ -8,13 +8,13 @@ class ParallelEnv:
     def __init__(self, env_id, num_threads):
         thread_names = [str(i) for i in range(num_threads)]
 
-        self.procs = [mp.Process(target=cartpole_mp, args=(name, env_id))
+        self.procs = [mp.Process(target=worker, args=(name, env_id))
                       for name in thread_names]
         [p.start() for p in self.procs]
         [p.join() for p in self.procs]
 
 # create a function that initializes and runs cartpole
-def cartpole_mp(name, env_id):
+def worker(name, env_id):
     env = gym.make(env_id)
     episode, max_eps, scores = 0, 10, [] 
 
