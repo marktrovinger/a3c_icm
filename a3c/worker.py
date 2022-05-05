@@ -1,6 +1,7 @@
 import numpy as np
 import gym
 from actor_critic import ActorCritic
+from wrappers.wrappers import make_env
 
 def worker(name, env_id, agent, optimizer, global_idx):
     env = gym.make(env_id)
