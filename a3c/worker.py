@@ -1,9 +1,10 @@
 import numpy as np
 import gym
+from actor_critic import ActorCritic
 
-def worker(name, env_id):
+def worker(name, env_id, agent, optimizer, global_idx):
     env = gym.make(env_id)
-    episode, max_eps, scores = 0, 10, [] 
+    episode, max_eps, scores = 0, 10, []
 
     # we don't need to run very many episodes
     while episode < max_eps:
