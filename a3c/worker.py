@@ -2,11 +2,16 @@ import numpy as np
 import gym
 from actor_critic import ActorCritic
 from wrappers.wrappers import make_env
+from memory import Memory
 
-def worker(name, env_id, agent, optimizer, global_idx):
+def worker(name, env_id, agent, optimizer, global_idx, n_actions, input_shape, n_threads):
     #env = gym.make(env_id)
     env = make_env(env_id)
     episode, max_eps, scores = 0, 10, []
+    
+    local_agent = ActorCritic(n_actions=n_actions, input_dims=input_shape)
+
+    memory = Memory()
 
     # we don't need to run very many episodes
     while episode < max_eps:
