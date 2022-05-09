@@ -4,7 +4,8 @@ from actor_critic import ActorCritic
 from wrappers.wrappers import make_env
 
 def worker(name, env_id, agent, optimizer, global_idx):
-    env = gym.make(env_id)
+    #env = gym.make(env_id)
+    env = make_env(env_id)
     episode, max_eps, scores = 0, 10, []
 
     # we don't need to run very many episodes
