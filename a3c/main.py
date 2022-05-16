@@ -6,7 +6,7 @@ if __name__ == '__main__':
     env_id = 'Pong-v0'
     # 6 for pong, 4 for cartpole
     n_threads = 6
-    input_shape = (42, 42, 1)
+    input_shape = [4, 42, 42]
     n_actions = 6
     global_idx = mp.Value('i', 0)
     env = ParallelEnv(n_actions=n_actions, input_shape=input_shape,
