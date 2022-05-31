@@ -17,5 +17,5 @@ class Memory():
         self.values.append(values)
         self.rewards.append(rewards)
     
-    def retrievaluese_memory(self):
+    def sample_memory(self):
         return self.log_probs, self.values, self.rewards
