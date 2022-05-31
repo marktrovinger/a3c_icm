@@ -3,6 +3,7 @@ import gym
 from actor_critic import ActorCritic
 from wrappers.wrappers import make_env
 from memory import Memory
+import torch as T
 
 def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_shape, n_threads):
     #env = gym.make(env_id)
@@ -24,20 +25,30 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
         obs = env.reset()
         score = 0
         done = False
+        episode_steps = 0
         # set hx to 0
+        hx = T.zeros(1, 256)
         while not done:
             # convert state to PyTorch tensor
-            action = env.action_space.sample()
+            state = T.tensor([obs], T.float)
             # pass state and hx to local_agent
+            action, value, log_probs, hx = local_agent(state, hx)
             obs_, reward, done, _ = env.step(action)
             # save memory
+            memory.store_memory(log_probs, value, reward)
             score += reward
             obs = obs_
             # increment steps
+            episode_steps += 1
             # perform loss and gradient calculations
-            # zero gradients
-            # detach hx
-            # clip gradients
+            if episode_steps % T_MAX == 0:
+                rewards, values, probs = memory.sample_memory()
+                loss = local_agent.calc_cost(obs, hx, done, rewards, values, probs)
+                # zero gradients
+                optimizer.zero_grad()
+                # detach hx
+                hx = hx.detach_()
+                # clip gradients
             # sync local with global
             # step optimizer
             # clear memory
