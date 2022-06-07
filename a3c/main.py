@@ -3,7 +3,7 @@ import torch.multiprocessing as mp
 
 if __name__ == '__main__':
     mp.set_start_method('spawn')
-    env_id = 'Pong-v0'
+    env_id = 'PongNoFrameskip-v4'
     # 6 for pong, 4 for cartpole
     n_threads = 6
     input_shape = [4, 42, 42]
