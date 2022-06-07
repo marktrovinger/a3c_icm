@@ -11,16 +11,15 @@ class ActorCritic(nn.Module):
         super(ActorCritic, self).__init__()
         self.gamma = gamma
         self.tau = beta
-        self.conv1 = nn.Conv2d(input_dims[0], 32, kernel_size=(3,3), stride=2,
+        self.conv1 = nn.Conv2d(input_dims[0], 32, 3, stride=2,
                 padding=1)
-        self.conv2 = nn.Conv2d(32, 32, kernel_size=(3,3), stride=2, padding=1)
-        self.conv3 = nn.Conv2d(32, 32, kernel_size=(3,3), stride=2, padding=1)
+        self.conv2 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
+        self.conv4 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
 
-        self.conv4 = nn.Conv2d(32, 32, kernel_size=(3,3), stride=2, padding=1)
+        conv_shape = self.calculate_conv_output(input_dims)
 
-        self.conv_shape = self.calculate_conv_output(input_dims)
-
-        self.gru = nn.GRUCell(self.conv_shape, 256)
+        self.gru = nn.GRUCell(conv_shape, 256)
         
         # pi is our policy layer, as opposed to v, our value network
         self.pi = nn.Linear(256, n_actions)
