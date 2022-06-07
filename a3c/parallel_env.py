@@ -10,7 +10,7 @@ class ParallelEnv:
         global_agent.share_memory()
         global_optimizer = SharedAdam(global_agent.parameters(), lr=1e-4)
 
-        self.procs = [mp.Process(target=worker, args=(thread_names, env_id, global_agent, global_optimizer, global_idx, 
+        self.procs = [mp.Process(target=worker, args=(name, env_id, global_agent, global_optimizer, global_idx, 
                                                     n_actions, input_shape, num_threads))
                       for name in thread_names]
         [p.start() for p in self.procs]
