@@ -1,12 +1,11 @@
-from threading import stack_size
 import gym
 import numpy as np
 import cv2
 from collections import deque
 
 class RepeatAction(gym.Wrapper):
-    def __init__(self, env = None, repeat = 4, fire_first = False) -> None:
-        super(RepeatAction, self).__init__()
+    def __init__(self, env = None, repeat = 4, fire_first = False):
+        super(RepeatAction, self).__init__(env)
         self.env = env
         self.repeat = repeat
         self.fire_first = fire_first
@@ -31,7 +30,7 @@ class RepeatAction(gym.Wrapper):
 
 class PreprocessFrame(gym.ObservationWrapper):
     def __init__(self, env, new_shape):
-        super(PreprocessFrame, self).__init__()
+        super(PreprocessFrame, self).__init__(env)
         self.env = env
         self.shape = (new_shape[2], new_shape[0], new_shape[1])
         # swap channel axis in new shape
@@ -53,18 +52,18 @@ class PreprocessFrame(gym.ObservationWrapper):
         return new_resized
 
 class StackFrames(gym.ObservationWrapper):
-    def __init__(self, env = None, stack_size=4):
-        super(StackFrames, self).__init__()
-        self.frame_stack = deque(maxlen=stack_size)
-        self.observation_space = gym.spaces.Box(env.observation_space.low.repeat(stack_size, axis=0),
-                                                env.observation_space.high.repeat(stack_size, axis=0),
+    def __init__(self, env = None, repeat=4):
+        super(StackFrames, self).__init__(env)
+        self.frame_stack = deque(maxlen=repeat)
+        self.observation_space = gym.spaces.Box(env.observation_space.low.repeat(repeat, axis=0),
+                                                env.observation_space.high.repeat(repeat, axis=0),
                                                 dtype=np.float32)
 
 
     def reset(self):
         self.frame_stack.clear()
         obs = self.env.reset()
-        for i in range(stack_size):
+        for i in range(self.frame_stack.maxlen):
             self.frame_stack.append(obs)
         frame_stack = np.array(self.frame_stack).reshape(self.observation_space.low.shape)
         return frame_stack
