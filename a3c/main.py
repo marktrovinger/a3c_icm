@@ -5,7 +5,7 @@ if __name__ == '__main__':
     mp.set_start_method('spawn')
     env_id = 'PongNoFrameskip-v4'
     # 6 for pong, 4 for cartpole
-    n_threads = 6
+    n_threads = 1
     input_shape = [4, 42, 42]
     n_actions = 6
     global_idx = mp.Value('i', 0)
