@@ -17,16 +17,14 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
     # swap channels in our input
     frame_buffer = [input_shape[1], input_shape[2], 1]
     # create the env, using make_env function
-    env = make_env(env_id, new_shape = frame_buffer)
+    env = make_env(env_id)
 
     # add time_steps to variables, increase max_eps
-    episode, max_eps, scores = 0, 10, []
+    episode, max_eps, t_steps, scores = 0, 1000, 0, []
     # we don't need to run very many episodes
     while episode < max_eps:
         obs = env.reset()
-        score = 0
-        done = False
-        episode_steps = 0
+        score, done, ep_steps = 0, False, 0
         # set hx to 0
         hx = T.zeros(1, 256)
         while not done:
@@ -40,9 +38,10 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
             score += reward
             obs = obs_
             # increment steps
-            episode_steps += 1
+            ep_steps += 1
+            t_steps += 1
             # perform loss and gradient calculations
-            if episode_steps % T_MAX == 0:
+            if ep_steps % T_MAX == 0 or done:
                 rewards, values, probs = memory.sample_memory()
                 loss = local_agent.calc_cost(obs, hx, done, rewards, values, probs)
                 # zero gradients
