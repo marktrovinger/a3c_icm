@@ -6,6 +6,7 @@ from memory import Memory
 from utils.utils import plot_learning_curve
 import torch as T
 
+
 def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_shape, n_threads):
     #env = gym.make(env_id)
     T_MAX = 20
@@ -17,7 +18,7 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
     # swap channels in our input
     frame_buffer = [input_shape[1], input_shape[2], 1]
     # create the env, using make_env function
-    env = make_env(env_id)
+    env = make_env(env_id, new_shape=frame_buffer)
 
     # add time_steps to variables, increase max_eps
     episode, max_eps, t_steps, scores = 0, 1000, 0, []

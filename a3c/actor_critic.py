@@ -31,7 +31,7 @@ class ActorCritic(nn.Module):
         dimensions = self.conv2(dimensions)
         dimensions = self.conv3(dimensions)
         dimensions = self.conv4(dimensions)
-        return int(np.product(dimensions.size()))
+        return int(np.prod(dimensions.size()))
 
     def forward(self, state, hidden_state):
         conv = F.elu(self.conv1(state))
