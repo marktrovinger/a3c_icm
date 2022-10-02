@@ -6,6 +6,7 @@ from memory import Memory
 from utils.utils import plot_learning_curve
 import torch as T
 from stable_baselines3.common.env_util import make_atari_env
+from stable_baselines3.common.atari_wrappers import WarpFrame
 
 
 def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_shape, n_threads):
@@ -19,8 +20,8 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
     # swap channels in our input
     frame_buffer = [input_shape[1], input_shape[2], 1]
     # create the env, using make_env function
-    # env = make_env(env_id, new_shape=frame_buffer)
-    env = make_atari_env(env_id)
+    env = make_env(env_id, new_shape=frame_buffer)
+    # env = make_atari_env(env_id)
     
 
     # add time_steps to variables, increase max_eps
@@ -28,12 +29,16 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
     # we don't need to run very many episodes
     while episode < max_eps:
         obs = env.reset()
+        print(f'Observation shape: {obs.shape}')
+        # using make_atai_env, above is (1,84,84,1), but is (4, 42, 42) with my make_env
         score, done, ep_steps = 0, False, 0
         # set hx to 0
         hx = T.zeros(1, 256)
         while not done:
             # convert state to PyTorch tensor
-            state = T.tensor([obs], dtype=T.float)
+            obs_np = np.array([obs])
+            print(f'Observation shape: {obs_np.shape}')
+            state = T.tensor(obs_np, dtype=T.float)
             # pass state and hx to local_agent
             action, value, log_probs, hx = local_agent(state, hx)
             obs_, reward, done, _ = env.step(action)

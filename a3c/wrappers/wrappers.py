@@ -34,15 +34,16 @@ class PreprocessFrame(gym.ObservationWrapper):
         self.env = env
         self.shape = (new_shape[2], new_shape[0], new_shape[1])
         # swap channel axis in new shape
-        self.observation_space = gym.spaces.Box(low = 0.0, high = 1.0, shape = self.shape,
+        self.observation_space = gym.spaces.Box(low = 0.0, high = 1.0, 
+                                                shape = self.shape,
                                                 dtype = np.float32)
         # set observation space to new shape
 
     def observation(self, observation):
         # convert to grey-scale
-        observation = cv2.cvtColor(observation, cv2.COLOR_RGB2GRAY)
+        new_frame = cv2.cvtColor(observation, cv2.COLOR_RGB2GRAY)
         # resize observation to new shape
-        resized = cv2.resize(observation, self.shape[1:], interpolation=cv2.INTER_AREA)
+        resized = cv2.resize(new_frame, self.shape[1:], interpolation=cv2.INTER_AREA)
         # convert to numpy array
         new_resized = np.array(resized, dtype=np.int8).reshape(self.shape)
         # move channel axis from 2 to 0
