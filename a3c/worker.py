@@ -7,7 +7,7 @@ from utils.utils import plot_learning_curve
 import torch as T
 
 def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_shape, n_threads):
-    env = gym.make(env_id)
+    #env = gym.make(env_id)
     T_MAX = 20
     
     
@@ -23,7 +23,7 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
     episode, max_eps, t_steps, scores = 0, 1000, 0, []
     # we don't need to run very many episodes
     while episode < max_eps:
-        obs = env.reset()
+        obs, info = env.reset()
         score, done, ep_steps = 0, False, 0
         # set hx to 0
         hx = T.zeros(1, 256)
