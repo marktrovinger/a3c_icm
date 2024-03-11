@@ -1,5 +1,5 @@
 import numpy as np
-import gym
+import gymnasium as gym
 from actor_critic import ActorCritic
 from wrappers.wrappers import make_env
 from memory import Memory
@@ -7,7 +7,7 @@ from utils.utils import plot_learning_curve
 import torch as T
 
 def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_shape, n_threads):
-    #env = gym.make(env_id)
+    env = gym.make(env_id)
     T_MAX = 20
     
     
