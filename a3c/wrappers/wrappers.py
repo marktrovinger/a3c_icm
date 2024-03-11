@@ -1,7 +1,8 @@
-import gym
+import gymnasium as gym
 import numpy as np
 import cv2
 from collections import deque
+from gymnasium.experimental.wrappers import AtariPreprocessingV0
 
 class RepeatAction(gym.Wrapper):
     def __init__(self, env = None, repeat = 4, fire_first = False):
@@ -76,7 +77,5 @@ class StackFrames(gym.ObservationWrapper):
 
 def make_env(env_name, new_shape = (42,42,1), frame_repeat = 4):
     env = gym.make(env_name)
-    env = RepeatAction(env, frame_repeat)
-    env = PreprocessFrame(env, new_shape)
-    env = StackFrames(env, frame_repeat)
+    env = AtariPreprocessingV0(env, screen_size=new_shape[0])
     return env
