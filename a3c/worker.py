@@ -27,12 +27,12 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
         score, done, ep_steps = 0, False, 0
         # set hx to 0
         hx = T.zeros(1, 256)
-        while not done:
+        while not terminated:
             # convert state to PyTorch tensor
             state = T.tensor([obs], dtype=T.float)
             # pass state and hx to local_agent
             action, value, log_probs, hx = local_agent(state, hx)
-            obs_, reward, done, _ = env.step(action)
+            obs_, reward, terminated, truncated, info = env.step(action)
             # save memory
             memory.store_memory(log_probs, value, reward)
             score += reward
