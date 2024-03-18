@@ -18,21 +18,24 @@ def worker(name, env_id, global_agent, optimizer, global_idx, n_actions, input_s
     frame_buffer = [input_shape[1], input_shape[2], 1]
     # create the env, using make_env function
     env = make_env(env_id)
-
+    done = False
     # add time_steps to variables, increase max_eps
     episode, max_eps, t_steps, scores = 0, 1000, 0, []
     # we don't need to run very many episodes
     while episode < max_eps:
         obs, info = env.reset()
-        score, done, ep_steps = 0, False, 0
+        score, terminated, ep_steps = 0, False, 0
         # set hx to 0
         hx = T.zeros(1, 256)
         while not terminated:
             # convert state to PyTorch tensor
-            state = T.tensor([obs], dtype=T.float)
+            state = T.tensor(obs[np.newaxis, :], dtype=T.float)
+            state = state.unsqueeze(1)
             # pass state and hx to local_agent
             action, value, log_probs, hx = local_agent(state, hx)
             obs_, reward, terminated, truncated, info = env.step(action)
+            if terminated or truncated:
+                done = True
             # save memory
             memory.store_memory(log_probs, value, reward)
             score += reward
